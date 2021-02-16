@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  code-server:
+    image: registry.cn-hangzhou.aliyuncs.com/kliang/code-server:1.0
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - PASSWORD=12345678
+      - SUDO_PASSWORD=12345678
+    ports:
+      - 8090:8443
+      - "9080-9090:9080-9090"
+    restart: unless-stopped

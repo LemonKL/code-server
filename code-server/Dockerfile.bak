@@ -1,0 +1,39 @@
+#基础镜像
+FROM linuxserver/code-server:version-v3.8.1
+
+#作者信息
+MAINTAINER zhangkailiang (zklqiji@163.com)
+
+RUN mkdir -p /tmp/code/ /opt/java/ /opt/gradle/ /opt/maven/
+
+# OpenJDK
+COPY jdk/OpenJDK*.tar.gz /tmp/code/
+RUN tar -zxf /tmp/code/OpenJDK*.tar.gz -C /opt/java/ \
+    && rm -f /tmp/code/OpenJDK*.tar.gz
+ENV JAVA_HOME=/opt/java/jdk8u282-b08
+ENV CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+ENV PATH=$PATH:$JAVA_HOME/bin
+
+
+# Gradle
+COPY gradle/gradle*.tar.gz /tmp/code/
+RUN tar -zxf /tmp/code/gradle*.tar.gz -C /opt/gradle/ \
+    && rm -f /tmp/code/gradle*.tar.gz
+ENV GRADLE_HOME=/opt/gradle/gradle-4.7
+ENV GRADLE_USER_HOME=~/.gradle
+ENV PATH=$PATH:$GRADLE_HOME/bin
+
+# Maven
+COPY maven/apache-maven*.tar.gz /tmp/code/
+RUN tar -zxf /tmp/code/apache-maven*.tar.gz -C /opt/maven/ \
+    && rm -f /tmp/code/apache-maven*.tar.gz
+COPY maven/settings.xml /opt/maven/conf/settings.xml
+ENV MAVEN_HOME=/opt/maven/apache-maven-3.6.3
+ENV M2_HOME=$MAVEN_HOME
+ENV PATH=$PATH:$MAVEN_HOME/bin
+
+# vscode config
+COPY config/settings.json /config/data/User/settings.json
+
+# vsix
+COPY vsix/*.vsix /opt/vsix/
